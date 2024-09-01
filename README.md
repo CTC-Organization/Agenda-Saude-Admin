@@ -1,8 +1,8 @@
-# myapp
+# Agenda Saúde - Lado admin
 
-A new Flutter project.
+Projeto desenvolvido com Project Idx
 
-## Getting Started
+## Getting Started Flutter
 
 This project is a starting point for a Flutter application.
 

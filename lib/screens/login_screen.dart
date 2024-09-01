@@ -42,7 +42,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://nestjs-copy-production.up.railway.app/auth/login'),
+        Uri.parse('https://api-agenda-saude-2.up.railway.app/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': _emailController.text,

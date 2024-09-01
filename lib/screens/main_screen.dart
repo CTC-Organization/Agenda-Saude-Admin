@@ -26,7 +26,7 @@ class MainScreenState extends State<MainScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.get(
-      Uri.parse('https://nestjs-copy-production.up.railway.app/requests'),
+      Uri.parse('https://api-agenda-saude-2.up.railway.app/requests'),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
@@ -53,7 +53,7 @@ class MainScreenState extends State<MainScreen> {
 
     final response = await http.patch(
       Uri.parse(
-          "https://nestjs-copy-production.up.railway.app/requests/accept/$id"),
+          "https://api-agenda-saude-2.up.railway.app/requests/accept/$id"),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json'

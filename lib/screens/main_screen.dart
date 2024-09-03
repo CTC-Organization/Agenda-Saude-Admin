@@ -88,7 +88,7 @@ class MainScreenState extends State<MainScreen> {
 
                 return ListTile(
                   title: Text(
-                      "id: ${request['id']} data: ${request['date']} id do paciente: ${request['patient']['id']} num do sus do paciente: ${request['patient']['susNumber']} status: ${request['status']}"), // Exibe os detalhes do request
+                      "id: ${request['id']} data: ${request['date']} id do paciente: ${request['patient']['id']} num do sus do paciente: ${request['patient']['susNumber']} status: ${request['status']} requisição criada em: ${request['createdAt']}"), // Exibe os detalhes do request
                   trailing: ElevatedButton(
                     onPressed: isPendingOrConfirmed
                         ? () {

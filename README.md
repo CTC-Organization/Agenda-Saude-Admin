@@ -1,5 +1,7 @@
 # Agenda Saúde - Lado admin
 
+## teste - email: email3@gmail.com senha: senha3 (Rodar emm Run without debug ou ctrl + F5)
+
 Projeto desenvolvido com Project Idx
 
 ## Getting Started Flutter

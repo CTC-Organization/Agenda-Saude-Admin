@@ -49,7 +49,9 @@ class LoginScreenState extends State<LoginScreen> {
           'password': _senhaController.text,
         }),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey('accessToken') &&
             responseData.containsKey('refreshToken')) {

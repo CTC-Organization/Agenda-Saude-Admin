@@ -4,6 +4,9 @@
 
 Projeto desenvolvido com Project Idx
 
+atualizar dependencias: flutter pub get
+no vscode normal: flutter run -d chrome --web-port=38287
+
 ## Getting Started Flutter
 
 This project is a starting point for a Flutter application.

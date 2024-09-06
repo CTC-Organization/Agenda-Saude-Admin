@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:myapp/screens/request_details_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,7 +14,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   List<Map<String, dynamic>> _requests = [];
-
+  var logger = Logger();
   @override
   void initState() {
     super.initState();
@@ -22,26 +23,33 @@ class MainScreenState extends State<MainScreen> {
 
   // Função para buscar a lista de itens da API
   Future<void> _fetchRequests() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accessToken = prefs.getString('accessToken');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString('accessToken');
 
-    final response = await http.get(
-      Uri.parse('https://api-agenda-saude-2.up.railway.app/requests'),
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
+      final response = await http.get(
+        Uri.parse('https://api-agenda-saude-2.up.railway.app/requests'),
+        headers: {'Authorization': 'Bearer $accessToken'},
+      );
 
-    if (response.statusCode == 200 ||
-        response.statusCode == 201 ||
-        response.statusCode == 204) {
-      final List<Map<String, dynamic>> requests =
-          List<Map<String, dynamic>>.from(jsonDecode(response.body));
-      if (mounted) {
-        setState(() {
-          _requests = requests;
-        });
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
+        final List<Map<String, dynamic>> requests =
+            List<Map<String, dynamic>>.from(jsonDecode(response.body));
+        if (mounted) {
+          setState(() {
+            _requests = requests;
+          });
+        }
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        Navigator.pushReplacementNamed(context, '/');
+      } else {
+        throw Exception('Erro no login');
+        // ocorreu um erro
       }
-    } else {
-      // Trate o erro adequadamente
+    } catch (e) {
+      logger.d('Erro no login: $e');
     }
   }
 

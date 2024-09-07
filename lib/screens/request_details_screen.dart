@@ -7,7 +7,6 @@ import 'package:myapp/screens/pdf_view_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-
 class RequestDetailsScreen extends StatefulWidget {
   final String requestId;
 
@@ -77,56 +76,58 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     }
   }
 
-String formatDate(String? isoDate) {
-  if (isoDate == null) {
-    return 'N/A';
-  }
-
-  try {
-    // Verifica o formato da data no log
-    logger.d("isoDate: $isoDate");
-
-    // Parse a data no formato UTC
-    final DateTime date = DateTime.parse(isoDate).toLocal();
-    logger.d("date: $date");
-
-    // Define o formato para data e hora
-    final DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
-
-        logger.d("dateFormat: $dateFormat");
-
-    final DateFormat dayFormat = DateFormat('EEEE', 'pt_BR');
-            logger.d("dayFormat: $dayFormat");
-
-    // Retorna a data formatada
-    return '${dayFormat.format(date)}, ${dateFormat.format(date)}';
-  } catch (e) {
-    logger.e("Error parsing date: $e");
-    return 'N/A';
-  }
-}
-int calculateAge(String? birthDate) {
-  if (birthDate == null) {
-    return -1; // Valor indicando que a idade não pode ser calculada
-  }
-
-  try {
-    // Parse a data de nascimento no formato UTC
-    final DateTime birthDateTime = DateTime.parse(birthDate).toLocal();
-    final DateTime now = DateTime.now();
-
-    // Calcula a diferença em anos
-    int age = now.year - birthDateTime.year;
-    if (now.month < birthDateTime.month ||
-        (now.month == birthDateTime.month && now.day < birthDateTime.day)) {
-      age--;
+  String formatDate(String? isoDate) {
+    if (isoDate == null) {
+      return 'N/A';
     }
 
-    return age;
-  } catch (e) {
-    return -1; // Valor indicando que a idade não pode ser calculada
+    try {
+      // Verifica o formato da data no log
+      logger.d("isoDate: $isoDate");
+
+      // Parse a data no formato UTC
+      final DateTime date = DateTime.parse(isoDate).toLocal();
+      logger.d("date: $date");
+
+      // Define o formato para data e hora
+      final DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
+
+      logger.d("dateFormat: $dateFormat");
+
+      final DateFormat dayFormat = DateFormat('EEEE', 'pt_BR');
+      logger.d("dayFormat: $dayFormat");
+
+      // Retorna a data formatada
+      return '${dayFormat.format(date)}, ${dateFormat.format(date)}';
+    } catch (e) {
+      logger.e("Error parsing date: $e");
+      return 'N/A';
+    }
   }
-}
+
+  int calculateAge(String? birthDate) {
+    if (birthDate == null) {
+      return -1; // Valor indicando que a idade não pode ser calculada
+    }
+
+    try {
+      // Parse a data de nascimento no formato UTC
+      final DateTime birthDateTime = DateTime.parse(birthDate).toLocal();
+      final DateTime now = DateTime.now();
+
+      // Calcula a diferença em anos
+      int age = now.year - birthDateTime.year;
+      if (now.month < birthDateTime.month ||
+          (now.month == birthDateTime.month && now.day < birthDateTime.day)) {
+        age--;
+      }
+
+      return age;
+    } catch (e) {
+      return -1; // Valor indicando que a idade não pode ser calculada
+    }
+  }
+
   Future<void> _acceptRequest() async {
     try {
       logger.d(
@@ -409,10 +410,10 @@ int calculateAge(String? birthDate) {
                   if (_requestDetails!['status'] == "COMPLETED" ||
                       _requestDetails!['status'] == "CONFIRMED" ||
                       _requestDetails!['status'] == "ACCEPTED")
-                  Text(
-                    'Data: ${formatDate(_requestDetails!['date'])}',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                    Text(
+                      'Data: ${formatDate(_requestDetails!['date'])}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   Text(
                     'Data de requisição: ${formatDate(_requestDetails!['createdAt'])}',
                     style: Theme.of(context).textTheme.titleLarge,
@@ -425,7 +426,7 @@ int calculateAge(String? birthDate) {
                     'Especialidade: ${_requestDetails!['specialty']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                                    Text(
+                  Text(
                     'NIS: ${_requestDetails!['patient']['susNumber']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
@@ -433,13 +434,13 @@ int calculateAge(String? birthDate) {
                     'Nome: ${_requestDetails!['patient']['user']['name']}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                                    Text(
+                  Text(
                     'Idade: ${calculateAge(_requestDetails!['patient']['user']['birthDate'])}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 16),
-                  if(_requestDetails!['status'] != "CANCELLED")
-                  _buildAttachments(_requestDetails!['attachments']),
+                  if (_requestDetails!['status'] != "CANCELLED")
+                    _buildAttachments(_requestDetails!['attachments']),
                   const SizedBox(height: 16),
                   _buildAcceptForm(_requestDetails!['status']),
                   const SizedBox(height: 16),

@@ -5,7 +5,8 @@ import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('pt_BR', null); // Inicializa a localidade para pt_BR
+  await initializeDateFormatting(
+      'pt_BR', null); // Inicializa a localidade para pt_BR
   runApp(const MyApp());
 }
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter App',
+      title: 'Agenda saúde (ADMIN)',
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),

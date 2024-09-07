@@ -21,7 +21,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLoggedIn(); 
+    _checkLoggedIn();
   }
 
   Future<void> _checkLoggedIn() async {
@@ -49,7 +49,9 @@ class LoginScreenState extends State<LoginScreen> {
           'refreshToken': refreshToken,
         }),
       );
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey('accessToken') &&
             responseData.containsKey('refreshToken') &&
@@ -97,7 +99,9 @@ class LoginScreenState extends State<LoginScreen> {
           'password': _senhaController.text,
         }),
       );
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey('accessToken') &&
             responseData.containsKey('refreshToken') &&
@@ -196,13 +200,17 @@ class LoginScreenState extends State<LoginScreen> {
                   : ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                         backgroundColor: Colors.deepPurple,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text('Login', style: TextStyle(fontSize: 18)),
+                      child: const Text('Login',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Color.fromRGBO(200, 200, 200, 1))),
                     ),
             ],
           ),

@@ -35,6 +35,7 @@ dependencies:
   shared_preferences: ^2.0.13
   logger: ^2.4.0
   url_launcher: ^6.0.9 # ou a versão mais recente
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

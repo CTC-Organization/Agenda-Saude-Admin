@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
@@ -22,7 +21,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLoggedIn(); // Verifica se o usuário está logado ao iniciar a tela
+    _checkLoggedIn(); 
   }
 
   Future<void> _checkLoggedIn() async {
@@ -50,9 +49,7 @@ class LoginScreenState extends State<LoginScreen> {
           'refreshToken': refreshToken,
         }),
       );
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey('accessToken') &&
             responseData.containsKey('refreshToken') &&
@@ -79,20 +76,10 @@ class LoginScreenState extends State<LoginScreen> {
           throw Exception('Tokens not found in the response');
         }
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Falha ao realizar o refresh 1: Credenciais inválidas')),
-          );
-        }
+        _showError('Falha ao realizar o refresh: Credenciais inválidas');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Falha ao realizar o refresh 2: $e')),
-        );
-      }
+      _showError('Falha ao realizar o refresh: $e');
     }
   }
 
@@ -110,9 +97,7 @@ class LoginScreenState extends State<LoginScreen> {
           'password': _senhaController.text,
         }),
       );
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 204) {
+      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey('accessToken') &&
             responseData.containsKey('refreshToken') &&
@@ -140,53 +125,87 @@ class LoginScreenState extends State<LoginScreen> {
           throw Exception('Tokens not found in the response');
         }
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Falha ao realizar o login 1')),
-          );
-        }
+        _showError('Falha ao realizar o login: Credenciais inválidas');
       }
     } catch (e) {
-      if (mounted) {
-        logger.d('Error: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Falha ao realizar o login 2: $e')),
-        );
-      }
+      logger.d('Error: $e');
+      _showError('Falha ao realizar o login: $e');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(
+        title: const Text('Login'),
+        backgroundColor: Colors.deepPurple,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _senhaController,
-              decoration: const InputDecoration(labelText: 'Senha'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: const Text('Login'),
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.deepPurple[800]),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.deepPurple),
                   ),
-          ],
+                  prefixIcon: Icon(Icons.email, color: Colors.deepPurple[800]),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _senhaController,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  labelStyle: TextStyle(color: Colors.deepPurple[800]),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.deepPurple),
+                  ),
+                  prefixIcon: Icon(Icons.lock, color: Colors.deepPurple[800]),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 30),
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: _login,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        backgroundColor: Colors.deepPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text('Login', style: TextStyle(fontSize: 18)),
+                    ),
+            ],
+          ),
         ),
       ),
     );

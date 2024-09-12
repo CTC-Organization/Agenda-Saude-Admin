@@ -6,6 +6,7 @@ import 'package:myapp/screens/image_viewer_screen.dart';
 import 'package:myapp/screens/pdf_view_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RequestDetailsScreen extends StatefulWidget {
   final String requestId;
@@ -38,7 +39,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.get(
-      Uri.parse('https://api-agenda-saude-2.up.railway.app/usfs'),
+      Uri.parse("$dotenv.env['API_URL']/usfs"),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
@@ -60,8 +61,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.get(
-      Uri.parse(
-          'https://api-agenda-saude-2.up.railway.app/requests/${widget.requestId}'),
+      Uri.parse("$dotenv.env['API_URL']/requests/${widget.requestId}"),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
@@ -145,8 +145,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
           "body: $_selectedDate?.toIso8601String() $lat $long $_selectedDoctor");
 
       final response = await http.patch(
-        Uri.parse(
-            'https://api-agenda-saude-2.up.railway.app/requests/accept/${widget.requestId}'),
+        Uri.parse("$dotenv.env['API_URL']/requests/accept/${widget.requestId}"),
         headers: {
           'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json'
@@ -184,8 +183,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.patch(
-      Uri.parse(
-          'https://api-agenda-saude-2.up.railway.app/requests/deny/${widget.requestId}'),
+      Uri.parse("$dotenv.env['API_URL']/requests/deny/${widget.requestId}"),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json'

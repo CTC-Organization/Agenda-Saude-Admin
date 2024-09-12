@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:myapp/screens/request_details_screen.dart';
@@ -20,34 +21,34 @@ class MainScreenState extends State<MainScreen> {
   bool sortAscending = true; // Variável para armazenar a ordem de classificação
   String? _selectedStatus; // Variável para armazenar o status selecionado
 
-String formatDate(String? isoDate) {
-  if (isoDate == null) {
-    return 'N/A';
+  String formatDate(String? isoDate) {
+    if (isoDate == null) {
+      return 'N/A';
+    }
+
+    try {
+      // Verifica o formato da data no log
+      logger.d("isoDate: $isoDate");
+
+      // Parse a data no formato UTC
+      final DateTime date = DateTime.parse(isoDate).toLocal();
+      logger.d("date: $date");
+
+      // Define o formato para data e hora
+      final DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
+
+      logger.d("dateFormat: $dateFormat");
+
+      final DateFormat dayFormat = DateFormat('EEEE', 'pt_BR');
+      logger.d("dayFormat: $dayFormat");
+
+      // Retorna a data formatada
+      return '${dayFormat.format(date)}, ${dateFormat.format(date)}';
+    } catch (e) {
+      logger.e("Error parsing date: $e");
+      return 'N/A';
+    }
   }
-
-  try {
-    // Verifica o formato da data no log
-    logger.d("isoDate: $isoDate");
-
-    // Parse a data no formato UTC
-    final DateTime date = DateTime.parse(isoDate).toLocal();
-    logger.d("date: $date");
-
-    // Define o formato para data e hora
-    final DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
-
-        logger.d("dateFormat: $dateFormat");
-
-    final DateFormat dayFormat = DateFormat('EEEE', 'pt_BR');
-            logger.d("dayFormat: $dayFormat");
-
-    // Retorna a data formatada
-    return '${dayFormat.format(date)}, ${dateFormat.format(date)}';
-  } catch (e) {
-    logger.e("Error parsing date: $e");
-    return 'N/A';
-  }
-}
 
   final List<String> _statusOptions = [
     'Todos',
@@ -71,7 +72,7 @@ String formatDate(String? isoDate) {
       String? accessToken = prefs.getString('accessToken');
 
       final response = await http.get(
-        Uri.parse('https://api-agenda-saude-2.up.railway.app/requests'),
+        Uri.parse("$dotenv.env['API_URL']/requests"),
         headers: {'Authorization': 'Bearer $accessToken'},
       );
 
@@ -188,7 +189,8 @@ String formatDate(String? isoDate) {
                               const DataColumn(label: Text('ID')),
                               const DataColumn(label: Text('Data')),
                               const DataColumn(label: Text('ID do Paciente')),
-                              const DataColumn(label: Text('NIS (número do SUS)')),
+                              const DataColumn(
+                                  label: Text('NIS (número do SUS)')),
                               const DataColumn(label: Text('Status')),
                               DataColumn(
                                 label: const Text('Criado em'),

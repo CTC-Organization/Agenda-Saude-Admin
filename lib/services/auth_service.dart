@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   Future<User> login(String email, String senha) async {
     final response = await http.post(
-      Uri.parse('https://api-agenda-saude-2.up.railway.app/auth/login'),
+      Uri.parse("$dotenv.env['API_URL']/auth/login"),
       headers: {'Content-Type': 'application/json'},
       body: {'email': email, 'senha': senha},
     );

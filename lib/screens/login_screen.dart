@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,8 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
       String? refreshToken = prefs.getString('refreshToken');
 
       final response = await http.post(
-        Uri.parse(
-            'https://api-agenda-saude-2.up.railway.app/auth/refresh-token/$userId'),
+        Uri.parse("$dotenv.env['API_URL']/auth/refresh-token/$userId"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'refreshToken': refreshToken,
@@ -92,7 +92,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://api-agenda-saude-2.up.railway.app/auth/login'),
+        Uri.parse("$dotenv.env['API_URL']/auth/login"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': _emailController.text,

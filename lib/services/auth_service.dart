@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   Future<User> login(String email, String senha) async {
     final response = await http.post(
-      Uri.parse("$dotenv.env['API_URL']/auth/login"),
+      Uri.parse("${dotenv.env['API_URL']}/auth/login"),
       headers: {'Content-Type': 'application/json'},
       body: {'email': email, 'senha': senha},
     );

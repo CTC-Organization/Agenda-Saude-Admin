@@ -39,7 +39,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.get(
-      Uri.parse("$dotenv.env['API_URL']/usfs"),
+      Uri.parse("${dotenv.env['API_URL']}/usfs"),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
@@ -61,7 +61,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.get(
-      Uri.parse("$dotenv.env['API_URL']/requests/${widget.requestId}"),
+      Uri.parse("${dotenv.env['API_URL']}/requests/${widget.requestId}"),
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
@@ -145,7 +145,8 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
           "body: $_selectedDate?.toIso8601String() $lat $long $_selectedDoctor");
 
       final response = await http.patch(
-        Uri.parse("$dotenv.env['API_URL']/requests/accept/${widget.requestId}"),
+        Uri.parse(
+            "${dotenv.env['API_URL']}/requests/accept/${widget.requestId}"),
         headers: {
           'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json'
@@ -183,7 +184,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     String? accessToken = prefs.getString('accessToken');
 
     final response = await http.patch(
-      Uri.parse("$dotenv.env['API_URL']/requests/deny/${widget.requestId}"),
+      Uri.parse("${dotenv.env['API_URL']}/requests/deny/${widget.requestId}"),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json'

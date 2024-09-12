@@ -72,7 +72,7 @@ class MainScreenState extends State<MainScreen> {
       String? accessToken = prefs.getString('accessToken');
 
       final response = await http.get(
-        Uri.parse("$dotenv.env['API_URL']/requests"),
+        Uri.parse("${dotenv.env['API_URL']}/requests"),
         headers: {'Authorization': 'Bearer $accessToken'},
       );
 

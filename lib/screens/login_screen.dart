@@ -43,7 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
       String? refreshToken = prefs.getString('refreshToken');
 
       final response = await http.post(
-        Uri.parse("$dotenv.env['API_URL']/auth/refresh-token/$userId"),
+        Uri.parse("${dotenv.env['API_URL']}/auth/refresh-token/$userId"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'refreshToken': refreshToken,
@@ -92,7 +92,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("$dotenv.env['API_URL']/auth/login"),
+        Uri.parse("${dotenv.env['API_URL']}/auth/login"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': _emailController.text,

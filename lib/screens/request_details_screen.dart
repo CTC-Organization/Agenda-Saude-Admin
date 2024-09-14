@@ -18,10 +18,10 @@ class RequestDetailsScreen extends StatefulWidget {
 }
 
 class RequestDetailsScreenState extends State<RequestDetailsScreen> {
-  DateTime? _selectedDate;
   String? _selectedUSF;
   String? _selectedDoctor;
   String? _observation;
+  DateTime? _selectedDateTime;
   final List<String> _doctors = ['Dr. A', 'Dr. B', 'Dra. C']; // Exemplo
   List<Map<String, dynamic>> _usfs = [];
   Map<String, dynamic>? _requestDetails;
@@ -68,6 +68,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 204) {
+      logger.d("corpo: ${jsonDecode(response.body)}");
       setState(() {
         _requestDetails = jsonDecode(response.body);
       });
@@ -131,7 +132,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
   Future<void> _acceptRequest() async {
     try {
       logger.d(
-          "body: ${_selectedDate?.toIso8601String()} $_selectedDoctor $_selectedUSF");
+          "body: ${_selectedDateTime?.toIso8601String()} $_selectedDoctor $_selectedUSF");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? accessToken = prefs.getString('accessToken');
       final usf = _usfs
@@ -140,9 +141,11 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
 
       String lat = usf['latitude'].toString();
       String long = usf['longitude'].toString();
+      String address = usf['endereco'].toString();
+      String unitName = usf['nome_oficial'].toString();
 
       logger.d(
-          "body: $_selectedDate?.toIso8601String() $lat $long $_selectedDoctor");
+          "body: $_selectedDateTime?.toIso8601String() $lat $long $_selectedDoctor $address $unitName");
 
       final response = await http.patch(
         Uri.parse(
@@ -152,7 +155,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
           'Content-Type': 'application/json'
         },
         body: jsonEncode({
-          'date': '${_selectedDate?.toIso8601String()}Z',
+          'date': '${_selectedDateTime?.toIso8601String()}Z',
           'latitude': lat,
           'longitude': long,
           'doctorName': _selectedDoctor,
@@ -323,22 +326,49 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () async {
-            DateTime? picked = await showDatePicker(
+            // Selecione a data
+            DateTime? pickedDate = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
-              firstDate: DateTime(2000),
+              firstDate:
+                  DateTime.now(), // Não permite escolher datas anteriores
               lastDate: DateTime(2101),
             );
 
-            if (picked != null && picked != _selectedDate) {
-              setState(() {
-                _selectedDate = picked;
-              });
+            if (pickedDate != null) {
+              // Selecione a hora após a data
+              TimeOfDay? pickedTime = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+              );
+
+              if (pickedTime != null) {
+                // Combinar a data e hora em um DateTime
+                DateTime combinedDateTime = DateTime(
+                  pickedDate.year,
+                  pickedDate.month,
+                  pickedDate.day,
+                  pickedTime.hour,
+                  pickedTime.minute,
+                );
+
+                // Verificar se a data/hora escolhida não é anterior ao momento atual
+                if (combinedDateTime.isBefore(DateTime.now())) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Selecione uma data/hora futura')),
+                  );
+                } else {
+                  setState(() {
+                    _selectedDateTime = combinedDateTime;
+                  });
+                }
+              }
             }
           },
-          child: Text(_selectedDate == null
-              ? 'Escolher Data'
-              : 'Data escolhida: ${DateFormat('dd/MM/yyyy').format(_selectedDate!)}'),
+          child: Text(_selectedDateTime == null
+              ? 'Escolher Data e Hora'
+              : 'Escolhido: ${DateFormat('dd/MM/yyyy – HH:mm').format(_selectedDateTime!)}'),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -375,7 +405,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () {
-            if (_selectedDate != null &&
+            if (_selectedDateTime != null &&
                 _selectedUSF != null &&
                 _selectedDoctor != null) {
               _showAcceptRequestDialog();
@@ -411,6 +441,41 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
                       _requestDetails!['status'] == "ACCEPTED")
                     Text(
                       'Data: ${formatDate(_requestDetails!['date'])}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  if (_requestDetails!['status'] == "COMPLETED" ||
+                      _requestDetails!['status'] == "CONFIRMED" ||
+                      _requestDetails!['status'] == "ACCEPTED")
+                    Text(
+                      'Latitude: ${_requestDetails!['latitude']}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  if (_requestDetails!['status'] == "COMPLETED" ||
+                      _requestDetails!['status'] == "CONFIRMED" ||
+                      _requestDetails!['status'] == "ACCEPTED")
+                    Text(
+                      'Longitude: ${_requestDetails!['longitude']}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  if (_requestDetails!['status'] == "COMPLETED" ||
+                      _requestDetails!['status'] == "CONFIRMED" ||
+                      _requestDetails!['status'] == "ACCEPTED")
+                    Text(
+                      'Endereço: ${_requestDetails!['address']}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  if (_requestDetails!['status'] == "COMPLETED" ||
+                      _requestDetails!['status'] == "CONFIRMED" ||
+                      _requestDetails!['status'] == "ACCEPTED")
+                    Text(
+                      'Nome: ${_requestDetails!['unitName']}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  if (_requestDetails!['status'] == "COMPLETED" ||
+                      _requestDetails!['status'] == "CONFIRMED" ||
+                      _requestDetails!['status'] == "ACCEPTED")
+                    Text(
+                      'Responsável: ${_requestDetails!['doctorName']}',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   Text(

@@ -159,6 +159,8 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
           'latitude': lat,
           'longitude': long,
           'doctorName': _selectedDoctor,
+          'address': address,
+          'unitName': unitName,
         }),
       );
 
@@ -199,6 +201,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
         response.statusCode == 201 ||
         response.statusCode == 204) {
       Navigator.pop(context); // Fecha a tela após sucesso
+      Navigator.pushReplacementNamed(context, '/main');
     } else {
       // Trate o erro adequadamente
     }
@@ -344,13 +347,16 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
 
               if (pickedTime != null) {
                 // Combinar a data e hora em um DateTime
-                DateTime combinedDateTime = DateTime(
+                DateTime wrongDateTime = DateTime(
                   pickedDate.year,
                   pickedDate.month,
                   pickedDate.day,
                   pickedTime.hour,
                   pickedTime.minute,
                 );
+
+                DateTime combinedDateTime =
+                    wrongDateTime.add(const Duration(hours: 3));
 
                 // Verificar se a data/hora escolhida não é anterior ao momento atual
                 if (combinedDateTime.isBefore(DateTime.now())) {
@@ -502,6 +508,11 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
                     'Idade: ${calculateAge(_requestDetails!['patient']['user']['birthDate'])}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
+                  if (_requestDetails!['status'] == "DENIED")
+                    Text(
+                      'Observação: ${_requestDetails!['observation']}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   const SizedBox(height: 16),
                   if (_requestDetails!['status'] != "CANCELLED")
                     _buildAttachments(_requestDetails!['attachments']),

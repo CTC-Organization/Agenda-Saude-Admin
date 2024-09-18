@@ -147,6 +147,8 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
       logger.d(
           "body: $_selectedDateTime?.toIso8601String() $lat $long $_selectedDoctor $address $unitName");
 
+    DateTime combinedDateTime = (_selectedDateTime ?? DateTime.now()).add(const Duration(hours: 3));
+
       final response = await http.patch(
         Uri.parse(
             "${dotenv.env['API_URL']}/requests/accept/${widget.requestId}"),
@@ -155,7 +157,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
           'Content-Type': 'application/json'
         },
         body: jsonEncode({
-          'date': '${_selectedDateTime?.toIso8601String()}Z',
+          'date': '${combinedDateTime.toIso8601String()}Z',
           'latitude': lat,
           'longitude': long,
           'doctorName': _selectedDoctor,
@@ -336,6 +338,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
               firstDate:
                   DateTime.now(), // Não permite escolher datas anteriores
               lastDate: DateTime(2101),
+              locale: const Locale("pt", "BR"),
             );
 
             if (pickedDate != null) {
@@ -347,7 +350,7 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
 
               if (pickedTime != null) {
                 // Combinar a data e hora em um DateTime
-                DateTime wrongDateTime = DateTime(
+                DateTime pickedDateTime = DateTime(
                   pickedDate.year,
                   pickedDate.month,
                   pickedDate.day,
@@ -355,8 +358,8 @@ class RequestDetailsScreenState extends State<RequestDetailsScreen> {
                   pickedTime.minute,
                 );
 
-                DateTime combinedDateTime =
-                    wrongDateTime.add(const Duration(hours: 3));
+                DateTime combinedDateTime = pickedDateTime
+                    .toLocal(); // Garante que está no horário local
 
                 // Verificar se a data/hora escolhida não é anterior ao momento atual
                 if (combinedDateTime.isBefore(DateTime.now())) {
